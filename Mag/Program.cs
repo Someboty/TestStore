@@ -1,18 +1,33 @@
 using Mag.Auth;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using Microsoft.IdentityModel.Tokens;
+using System.Reflection.Metadata;
 using System.Security.Claims;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 ConfigurationManager configuration = builder.Configuration;
 builder.Services.AddDbContext<ApplicationContext>(options => options.UseSqlServer(configuration.GetConnectionString("ConnStr")));
-builder.Services.AddMvc();
+builder.Services.AddControllersWithViews();
 builder.Services.AddIdentity<IdentityUser, IdentityRole>()
     .AddEntityFrameworkStores<ApplicationContext>()
     .AddDefaultTokenProviders();
-// Add services to the container.
-builder.Services.AddControllersWithViews();
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultSignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+    options.DefaultAuthenticateScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+})
+.AddCookie();
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("AdminOnly", policy => policy.RequireRole("Admin"));
+});
+
 
 var app = builder.Build();
 
@@ -29,30 +44,8 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
-app.UseAuthorization();
 app.UseAuthentication();
-app.Use(async (context, next) =>
-{
-    if (context.User.Identity != null)
-    {
-        if (context.User.Identity.IsAuthenticated)
-        {
-
-            ClaimsPrincipal principal = new ClaimsPrincipal();
-
-
-            List<Claim> claims = new List<Claim>();
-            claims.Add(new Claim("UserId", context.User.Identity.Name));
-
-            ClaimsIdentity identity = new ClaimsIdentity(claims);
-
-            principal.AddIdentity(identity);
-
-            context.User = principal;
-        }
-    }
-    await next();
-});
+app.UseAuthorization();
 
 app.MapControllerRoute(
     name: "default",
