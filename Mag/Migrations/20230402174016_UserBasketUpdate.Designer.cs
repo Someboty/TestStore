@@ -4,6 +4,7 @@ using Mag.Auth;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Mag.Migrations
 {
     [DbContext(typeof(ApplicationContext))]
-    partial class ApplicationContextModelSnapshot : ModelSnapshot
+    [Migration("20230402174016_UserBasketUpdate")]
+    partial class UserBasketUpdate
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -21,6 +24,21 @@ namespace Mag.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
+
+            modelBuilder.Entity("BasketProduct", b =>
+                {
+                    b.Property<int>("BasketsId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ProductsId")
+                        .HasColumnType("int");
+
+                    b.HasKey("BasketsId", "ProductsId");
+
+                    b.HasIndex("ProductsId");
+
+                    b.ToTable("BasketProduct");
+                });
 
             modelBuilder.Entity("Mag.Models.AspNetUser", b =>
                 {
@@ -34,24 +52,12 @@ namespace Mag.Migrations
                         .IsConcurrencyToken()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime?>("DOB")
-                        .HasColumnType("datetime2");
-
                     b.Property<string>("Email")
                         .HasMaxLength(256)
                         .HasColumnType("nvarchar(256)");
 
                     b.Property<bool>("EmailConfirmed")
                         .HasColumnType("bit");
-
-                    b.Property<string>("FirstName")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int?>("Gender")
-                        .HasColumnType("int");
-
-                    b.Property<string>("LastName")
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("LockoutEnabled")
                         .HasColumnType("bit");
@@ -75,9 +81,6 @@ namespace Mag.Migrations
 
                     b.Property<bool>("PhoneNumberConfirmed")
                         .HasColumnType("bit");
-
-                    b.Property<string>("SecondName")
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("nvarchar(max)");
@@ -119,29 +122,6 @@ namespace Mag.Migrations
                     b.HasIndex("AspNetUserId");
 
                     b.ToTable("Baskets");
-                });
-
-            modelBuilder.Entity("Mag.Models.BasketProduct", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("BasketsId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("ProductsId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("BasketsId");
-
-                    b.HasIndex("ProductsId");
-
-                    b.ToTable("BasketProducts");
                 });
 
             modelBuilder.Entity("Mag.Models.Product", b =>
@@ -306,6 +286,21 @@ namespace Mag.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("BasketProduct", b =>
+                {
+                    b.HasOne("Mag.Models.Basket", null)
+                        .WithMany()
+                        .HasForeignKey("BasketsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Mag.Models.Product", null)
+                        .WithMany()
+                        .HasForeignKey("ProductsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("Mag.Models.Basket", b =>
                 {
                     b.HasOne("Mag.Models.AspNetUser", "User")
@@ -315,25 +310,6 @@ namespace Mag.Migrations
                         .IsRequired();
 
                     b.Navigation("User");
-                });
-
-            modelBuilder.Entity("Mag.Models.BasketProduct", b =>
-                {
-                    b.HasOne("Mag.Models.Basket", "Baskets")
-                        .WithMany("Products")
-                        .HasForeignKey("BasketsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Mag.Models.Product", "Products")
-                        .WithMany("Baskets")
-                        .HasForeignKey("ProductsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Baskets");
-
-                    b.Navigation("Products");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -385,16 +361,6 @@ namespace Mag.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-                });
-
-            modelBuilder.Entity("Mag.Models.Basket", b =>
-                {
-                    b.Navigation("Products");
-                });
-
-            modelBuilder.Entity("Mag.Models.Product", b =>
-                {
-                    b.Navigation("Baskets");
                 });
 #pragma warning restore 612, 618
         }

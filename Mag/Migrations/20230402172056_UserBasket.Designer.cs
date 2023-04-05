@@ -4,6 +4,7 @@ using Mag.Auth;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Mag.Migrations
 {
     [DbContext(typeof(ApplicationContext))]
-    partial class ApplicationContextModelSnapshot : ModelSnapshot
+    [Migration("20230402172056_UserBasket")]
+    partial class UserBasket
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -21,6 +24,21 @@ namespace Mag.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
+
+            modelBuilder.Entity("BasketProduct", b =>
+                {
+                    b.Property<int>("BasketsId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ProductsId")
+                        .HasColumnType("int");
+
+                    b.HasKey("BasketsId", "ProductsId");
+
+                    b.HasIndex("ProductsId");
+
+                    b.ToTable("BasketProduct");
+                });
 
             modelBuilder.Entity("Mag.Models.AspNetUser", b =>
                 {
@@ -30,12 +48,12 @@ namespace Mag.Migrations
                     b.Property<int>("AccessFailedCount")
                         .HasColumnType("int");
 
+                    b.Property<int?>("BasketId")
+                        .HasColumnType("int");
+
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime?>("DOB")
-                        .HasColumnType("datetime2");
 
                     b.Property<string>("Email")
                         .HasMaxLength(256)
@@ -43,15 +61,6 @@ namespace Mag.Migrations
 
                     b.Property<bool>("EmailConfirmed")
                         .HasColumnType("bit");
-
-                    b.Property<string>("FirstName")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int?>("Gender")
-                        .HasColumnType("int");
-
-                    b.Property<string>("LastName")
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("LockoutEnabled")
                         .HasColumnType("bit");
@@ -76,9 +85,6 @@ namespace Mag.Migrations
                     b.Property<bool>("PhoneNumberConfirmed")
                         .HasColumnType("bit");
 
-                    b.Property<string>("SecondName")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("nvarchar(max)");
 
@@ -90,6 +96,10 @@ namespace Mag.Migrations
                         .HasColumnType("nvarchar(256)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("BasketId")
+                        .IsUnique()
+                        .HasFilter("[BasketId] IS NOT NULL");
 
                     b.HasIndex("NormalizedEmail")
                         .HasDatabaseName("EmailIndex");
@@ -110,38 +120,12 @@ namespace Mag.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("AspNetUserId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<int>("AspNetUserId")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("AspNetUserId");
 
                     b.ToTable("Baskets");
-                });
-
-            modelBuilder.Entity("Mag.Models.BasketProduct", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("BasketsId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("ProductsId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("BasketsId");
-
-                    b.HasIndex("ProductsId");
-
-                    b.ToTable("BasketProducts");
                 });
 
             modelBuilder.Entity("Mag.Models.Product", b =>
@@ -306,34 +290,28 @@ namespace Mag.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("Mag.Models.Basket", b =>
+            modelBuilder.Entity("BasketProduct", b =>
                 {
-                    b.HasOne("Mag.Models.AspNetUser", "User")
+                    b.HasOne("Mag.Models.Basket", null)
                         .WithMany()
-                        .HasForeignKey("AspNetUserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("User");
-                });
-
-            modelBuilder.Entity("Mag.Models.BasketProduct", b =>
-                {
-                    b.HasOne("Mag.Models.Basket", "Baskets")
-                        .WithMany("Products")
                         .HasForeignKey("BasketsId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Mag.Models.Product", "Products")
-                        .WithMany("Baskets")
+                    b.HasOne("Mag.Models.Product", null)
+                        .WithMany()
                         .HasForeignKey("ProductsId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
 
-                    b.Navigation("Baskets");
+            modelBuilder.Entity("Mag.Models.AspNetUser", b =>
+                {
+                    b.HasOne("Mag.Models.Basket", "Basket")
+                        .WithOne("User")
+                        .HasForeignKey("Mag.Models.AspNetUser", "BasketId");
 
-                    b.Navigation("Products");
+                    b.Navigation("Basket");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -389,12 +367,7 @@ namespace Mag.Migrations
 
             modelBuilder.Entity("Mag.Models.Basket", b =>
                 {
-                    b.Navigation("Products");
-                });
-
-            modelBuilder.Entity("Mag.Models.Product", b =>
-                {
-                    b.Navigation("Baskets");
+                    b.Navigation("User");
                 });
 #pragma warning restore 612, 618
         }

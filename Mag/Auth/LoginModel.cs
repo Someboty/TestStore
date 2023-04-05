@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Mag.Auth
 {
-    public class LoginModel
+    public record LoginModel
     {
         [DataType(DataType.EmailAddress)]
         [Required(ErrorMessage = "Email is required")]

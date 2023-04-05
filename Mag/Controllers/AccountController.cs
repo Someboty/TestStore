@@ -1,9 +1,12 @@
 ﻿using Mag.Auth;
+using Mag.Interfaces;
+using Mag.Models;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
 
 namespace Mag.Controllers
@@ -11,18 +14,15 @@ namespace Mag.Controllers
     [AllowAnonymous]
     public class AccountController : Controller
     {
-        private readonly UserManager<IdentityUser> _userManager;
-        private readonly RoleManager<IdentityRole> _roleManager;
-        private readonly IConfiguration _configuration;
+        private readonly UserManager<AspNetUser> _userManager;
+        private readonly IUserService _userService;
+        private readonly ApplicationContext _context;
 
-        public AccountController(
-            UserManager<IdentityUser> userManager,
-            RoleManager<IdentityRole> roleManager,
-            IConfiguration configuration)
+        public AccountController(UserManager<AspNetUser> userManager, IUserService userService, ApplicationContext context)
         {
             _userManager = userManager;
-            _roleManager = roleManager;
-            _configuration = configuration;
+            _userService = userService;
+            _context = context;
         }
         [HttpGet]
         public IActionResult Login()
@@ -35,22 +35,30 @@ namespace Mag.Controllers
         {
             if (!ModelState.IsValid)
             {
-                return BadRequest(new ProblemDetails { Status = 400, Title = "Model is not valid!" });
+                TempData["status"] = 400;
+                TempData["Message"] = "Invalid requst";
+                return RedirectToAction("Error", "Home");
             }
             var user = await _userManager.FindByEmailAsync(model.Email);
             if (user == null)
             {
-                return Unauthorized(new ProblemDetails { Status = 401, Title = "Email or password is invalid" });
+                TempData["status"] = 401;
+                TempData["Message"] = "Email or password is invalid";
+                return RedirectToAction("Error", "Home");
             }
             if (await _userManager.CheckPasswordAsync(user, model.Password) == false)
             {
-                return Unauthorized(new ProblemDetails { Status = 401, Title = "Email or password is invalid" });
+                TempData["status"] = 401;
+                TempData["Message"] = "Email or password is invalid";
+                return RedirectToAction("Error", "Home");
             }
             var userRoles = await _userManager.GetRolesAsync(user);
 
             var authClaims = new List<Claim>
                 {
-                    new Claim(ClaimTypes.Name, user.UserName),
+                    new Claim(ClaimTypes.NameIdentifier, user!.Id),
+                    new Claim(ClaimTypes.Name, user!.UserName!),
+                    new Claim(ClaimTypes.Email, user!.Email!),
                 };
 
             foreach (var userRole in userRoles)
@@ -81,9 +89,13 @@ namespace Mag.Controllers
             {
                 var userExists = await _userManager.FindByNameAsync(model.Email);
                 if (userExists != null)
-                    return BadRequest(new Response { Status = "Error", Message = "User already exists!" });
+                {
+                    TempData["status"] = 400;
+                    TempData["Message"] = "User already exists!";
+                    return RedirectToAction("Error", "Home");
+                }
 
-                IdentityUser user = new()
+                AspNetUser user = new()
                 {
                     Email = model.Email,
                     SecurityStamp = Guid.NewGuid().ToString(),
@@ -93,17 +105,44 @@ namespace Mag.Controllers
                 if (!result.Succeeded)
                 {
                     var errorMessage = string.Join(", ", result.Errors.Select(e => e.Description));
-                    return BadRequest(new Response { Status = "Error", Message = $"User creation failed! {errorMessage}" });
+                    TempData["status"] = 400;
+                    TempData["Message"] = $"User creation failed! {errorMessage}";
+                    return RedirectToAction("Error", "Home");
                 }
-
-                return Ok(new Response { Status = "Success", Message = "User created successfully!" });
+                return RedirectToAction("Login");
             }
-            return BadRequest(new Response { Status = "Error", Message = "Model is not valid!" });
+            TempData["status"] = 400;
+            TempData["Message"] = "Invalid request";
+            return RedirectToAction("Error", "Home");
         }
         public async Task<IActionResult> Logout()
         {
             await HttpContext.SignOutAsync();
             return Redirect("/");
+        }
+        public async Task<IActionResult> Profile()
+        {
+            return View(await _userService.CurrentUser());
+        }
+        public async Task<IActionResult> UpdateProfile(AspNetUser model)
+        {
+            if (ModelState.IsValid)
+            {
+                var user = await _userService.CurrentUser()!;
+                var profile = await _context.Users.FirstOrDefaultAsync(u => u.Id == user.Id);
+                profile.FirstName = model.FirstName;
+                profile.LastName = model.LastName;
+                profile.SecondName = model.SecondName;
+                profile.Gender = model.Gender;
+                profile.DOB = model.DOB;
+                profile.Email = model.Email;
+                _context.Users.Update(profile);
+                await _context.SaveChangesAsync();
+                return RedirectToAction("Profile");
+            }
+            TempData["status"] = 400;
+            TempData["Message"] = "Invalid request";
+            return RedirectToAction("Error", "Home");
         }
     }
 }

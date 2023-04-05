@@ -1,8 +1,9 @@
 ﻿using Mag.Models;
-using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
+using System.Net;
+using Mag.Auth;
 
 namespace Mag.Controllers
 {
@@ -23,11 +24,11 @@ namespace Mag.Controllers
         {
             return View();
         }
-
-        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
+        [HttpGet("error/")]
         public IActionResult Error()
         {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+            var resp = new Response { status = (int)TempData["status"], Message= TempData["Message"].ToString() };
+            return View(resp);
         }
     }
 }

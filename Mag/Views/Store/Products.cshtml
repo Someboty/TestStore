@@ -1,0 +1,18 @@
+﻿@model List<Product>
+@{
+    ViewData["Title"] = "Products";
+}
+<div class="container">
+    <div class="row">
+        @foreach(var prod in Model)
+        {
+            <div class="col-md-3">
+                <a asp-controller="Store" asp-action="Product" asp-route-id="@prod.Id">@prod.Name</a>
+                <a asp-controller="Store" asp-action="Product" asp-route-id="@prod.Id"><img src="data:image;base64,@System.Convert.ToBase64String(prod.Image!)" class="img-thumbnail" /></a>                
+                @prod.Category.ToString()
+                <br />
+                @prod.Price$
+            </div>
+        }
+    </div>
+</div>

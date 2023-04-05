@@ -1,12 +1,26 @@
-﻿@using Microsoft.AspNetCore.Identity
-@inject SignInManager<IdentityUser> SignInManager
-@inject UserManager<IdentityUser> UserManager
+﻿@using Mag.Interfaces;
+@using Microsoft.AspNetCore.Identity
+@inject SignInManager<AspNetUser> SignInManager
+@inject UserManager<AspNetUser> UserManager
+@inject IUserService UserService
 
 <ul class="navbar-nav">
-@if (User?.Identity?.Name != null)
+@if (UserService.IsAuthorized())
 {
+        var basketItems = await UserService.BasketItems();
+        <li class="nav-item">
+            <a class="btn position-relative me-5" asp-controller="Store" asp-action="ViewBasket">
+                <i class="bi bi-cart"></i>
+                @if (basketItems != 0)
+                {
+                    <span class="position-absolute top-100 start-100 translate-middle badge rounded-pill bg-primary">
+                        @basketItems <span class="visually-hidden">items in basket</span>
+                    </span>
+                }
+            </a>
+        </li>
     <li class="nav-item">
-        <a class="nav-link text-dark" asp-controller="Home" asp-action="Index" >Hello @User.Identity?.Name!</a>
+        <a class="nav-link text-dark" asp-controller="Account" asp-action="Profile" >Hello, @UserService.GetUserName()</a>
     </li>
     <li class="nav-item">
         <form class="form-inline" asp-controller="Account" asp-action="Logout">

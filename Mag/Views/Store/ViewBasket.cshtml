@@ -1,0 +1,43 @@
+﻿@model Basket
+@{
+    ViewData["Title"] = "Basket";
+}
+<h2>Your basket</h2>
+<hr />
+<div class="container">
+    <div class="row align-items-center">
+        @if (Model != null && Model.Products.Any())
+        {
+            @foreach(var prod in Model.Products.GroupBy(b=>b.Products))
+            {
+                <div class="col-md-1">
+                    <a class="link-dark" style="text-decoration:none" asp-controller="Store" asp-action="Product" asp-route-id="@prod.Key.Id"><img src="data:image;base64,@System.Convert.ToBase64String(prod.Key.Image!)" class="img-thumbnail" /></a>                           
+                </div>
+                <div class="col-md-2"><a class="link-dark" style="text-decoration:none" asp-controller="Store" asp-action="Product" asp-route-id="@prod.Key.Id">@prod.Key.Name</a></div>
+                <div class="col-md-2">
+                    <div class="input-group mb-3">
+                        <a class="btn btn-outline-danger" asp-controller="Store" asp-action="RemoveProduct" asp-route-id="@prod.Key.Id"><i class="bi bi-dash-lg"></i></a>
+                        <input type="text" class="form-control text-center" disabled onkeypress='return event.charCode >= 48 && event.charCode <= 57' aria-label="@prod.Count()" value="@prod.Count()" maxlength="3" style="width:55px; flex-grow:initial">
+                        <a class="btn btn-outline-success" asp-controller="Store" asp-action="AddProduct" asp-route-id="@prod.Key.Id"><i class="bi bi-plus-lg"></i></a>
+                    </div>
+                </div>
+                <div class="col-md-2 text-end">
+                    @{
+                        var Price = prod.Count() * prod.Key.Price;
+                    }
+                    @Price$
+                </div>
+                <div class="col-md-5 text-end">
+                    <a class="btn-close" aria-label="Close" asp-controller="Store" asp-action="DeleteProduct" asp-route-id="@prod.Key.Id"></a>
+                </div>
+                <hr />
+            }
+            <div class="col-md-12 text-end">
+                @{
+                    var sum = Model.Products.Sum(p => p.Products.Price);
+                }
+                @sum$
+            </div>
+        }
+    </div>
+</div> 
