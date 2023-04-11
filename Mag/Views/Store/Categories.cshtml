@@ -8,8 +8,8 @@
     <div class="row">
         @foreach(var cat in Model)
         {
-            <div class="col-md-3">
-                <a asp-controller="Store" asp-action="Products" asp-route-id="@((int)cat)">@cat.GetCategoryName()</a>
+            <div class="list-group mb-3">
+                <a asp-controller="Store" asp-action="Products" asp-route-id="@((int)cat)" style=" text-decoration:none" class="link-dark">@cat.GetCategoryName()</a>
             </div>
         }
     </div>
