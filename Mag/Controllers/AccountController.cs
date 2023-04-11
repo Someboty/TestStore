@@ -11,7 +11,7 @@ using System.Security.Claims;
 
 namespace Mag.Controllers
 {
-    [AllowAnonymous]
+    [Authorize]
     public class AccountController : Controller
     {
         private readonly UserManager<AspNetUser> _userManager;
@@ -24,12 +24,14 @@ namespace Mag.Controllers
             _userService = userService;
             _context = context;
         }
+        [AllowAnonymous]
         [HttpGet]
         public IActionResult Login()
         {
             return View();
         }
 
+        [AllowAnonymous]
         [HttpPost]
         public async Task<IActionResult> Login(LoginModel model)
         {
@@ -77,11 +79,13 @@ namespace Mag.Controllers
             await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal, authProps);
             return Redirect("/");
         }
+        [AllowAnonymous]
         [HttpGet]
         public IActionResult Register()
         {
             return View();
         }
+        [AllowAnonymous]
         [HttpPost]
         public async Task<IActionResult> Register(RegisterModel model)
         {
@@ -120,10 +124,13 @@ namespace Mag.Controllers
             await HttpContext.SignOutAsync();
             return Redirect("/");
         }
+        [HttpGet]
         public async Task<IActionResult> Profile()
         {
+            ViewBag.NavBar = 1;
             return View(await _userService.CurrentUser());
         }
+        [HttpPost]
         public async Task<IActionResult> UpdateProfile(AspNetUser model)
         {
             if (ModelState.IsValid)
@@ -143,6 +150,53 @@ namespace Mag.Controllers
             TempData["status"] = 400;
             TempData["Message"] = "Invalid request";
             return RedirectToAction("Error", "Home");
+        }
+        [HttpGet]
+        public async Task<IActionResult> Adress()
+        {
+            ViewBag.NavBar = 2;
+            var user = await _userService.CurrentUser();
+            var adress = await _context.Adresses.Where(a => a.UserId == user.Id).OrderByDescending(a => a.IsPrimary).ThenBy(a => a.Id).ToListAsync();
+            var count = adress.Count();
+            for (var i = 0; i < 3-count; i++)
+            {
+                adress.Add(new Adress());
+            }
+            return View(adress);
+        }
+        [HttpPost]
+        public async Task<IActionResult> AddAdress(List<Adress> adresses)
+        {
+            var user = await _userService.CurrentUser();
+            user.Adresses ??= new List<Adress>();
+            if (ModelState.IsValid)
+            {
+                foreach (var model in adresses)
+                {
+                    var adress = model.Id == 0? new Adress(): await _context.Adresses.FirstOrDefaultAsync(a => a.Id == model.Id);
+                    adress.UserId = user.Id;
+                    adress.State = model.State;
+                    adress.City = model.City;
+                    adress.PostalCode = model.PostalCode;
+                    adress.Street = model.Street;
+                    adress.HouseNumber = model.HouseNumber;
+                    adress.IsPrimary = model.IsPrimary;
+                    if (model.Id == 0) { user.Adresses.Add(adress); }
+                    else { _context.Adresses.Update(adress); }
+                }
+                await _context.SaveChangesAsync();
+                return RedirectToAction("Adress");
+            }
+            TempData["status"] = 400;
+            TempData["Message"] = "Invalid request";
+            return RedirectToAction("Error", "Home");
+        }
+        public async Task<IActionResult> Orders()
+        {
+            ViewBag.NavBar = 3;
+            var user = await _userService.CurrentUser();
+            var order = await _context.Orders.Where(o => o.UserId == user.Id).Include(o => o.Products).ThenInclude(o => o.Product).Include(o => o.StatusHistories).OrderBy(o => o.CreatedDate).ToListAsync();
+            return View(order);
         }
     }
 }

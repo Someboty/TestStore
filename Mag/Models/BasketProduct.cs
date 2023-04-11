@@ -6,9 +6,9 @@ namespace Mag.Models
     {
         [Key]
         public int Id { get; set; }
-        public int BasketsId { get; set; }
-        public int ProductsId { get; set; }
-        public Basket Baskets { get; set; }
-        public Product Products { get; set; }
+        public int BasketId { get; set; }
+        public int ProductId { get; set; }
+        public Basket Basket { get; set; }
+        public Product Product { get; set; }
     }
 }

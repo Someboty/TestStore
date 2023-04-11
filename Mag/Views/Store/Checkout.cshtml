@@ -1,0 +1,65 @@
+﻿@{
+    ViewData["Title"] = "Checkout";
+    Basket basket = (Basket)ViewBag.basket;
+    Adress adress = (Adress)ViewBag.adress;
+}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-10 offset-md-1">
+            <h2>Підсумок</h2>
+            <hr />
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-4 offset-md-1">
+            <h3>Товари</h3>
+            <div class="row mt-5">
+            @foreach (var prod in basket.BasketProducts.GroupBy(b => b.Product))
+            {
+                <div class="col-md-2">
+                    <img src="data:image;base64,@System.Convert.ToBase64String(prod.Key.Image!)" class="img-thumbnail" />
+                </div>
+                <div class="col-md-3">@prod.Key.Name</div>
+                <div class="col-md-3">
+                    <div class="input-group mb-3"> 
+                        @prod.Count()  
+                    </div>
+                </div>
+                <div class="col-md-2 text-end">
+                    @{
+                        var Price = prod.Count() * prod.Key.Price;
+                    }
+                    @Price$
+                </div>
+                <hr />
+            }
+            <div class="col-md-10 text-end mb-3">
+                @{
+                    var sum = basket.BasketProducts.Sum(p => p.Product.Price);
+                }
+                @sum$
+            </div>
+            </div>
+        </div>
+        <div class="col-md-4 offset-md-1">
+            <h3>Адреса доставки</h3>
+            <div class="row mt-5">
+            @Html.Raw(adress.GetAdress)
+            </div>
+        </div>
+    </div>
+    <div class="row">
+            <div class="col-md-3 offset-md-1">
+                <a asp-controller="Account" asp-action="Adress" class="btn btn-primary"><i class="bi bi-caret-left-fill"></i>До профілю</a>
+            </div>
+                <div class="col-md-6 text-end">
+                    <form>
+                        <input type="hidden" name="adressId" value="@adress.Id" />
+                        <button type="submit" asp-controller="Store" asp-action="Order" class="btn btn-primary">Оформити замовленння<i class="bi bi-caret-right-fill"></i></button>
+                    </form>
+                </div>
+        <div class="col-md-3 offset-md-1  mt-5">
+            <a asp-controller="Store" asp-action="ViewBasket" class="btn btn-primary"><i class="bi bi-caret-left-fill"></i>До кошика</a>
+        </div>
+    </div>
+</div>

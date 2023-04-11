@@ -1,0 +1,49 @@
+﻿@model List<Adress>
+@{
+    ViewData["Title"] = "Select a shipping address";
+}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-4 offset-md-1">
+            <h2>Оберіть адресу доставки</h2>
+            <hr />
+        </div>
+    </div>
+    @if(Model.Any())
+    {
+        <form asp-action="ChooseAdress">
+            <div class="row mt-5">
+                <div class="col-md-6 offset-md-1">
+                    @foreach(var adress in Model)
+                    {
+                    <div class="form-check mb-3">
+                        <label class="form-check-label"><input class="form-check-input" type="radio" value="@adress.Id" asp-for="@adress.Id" />@Html.Raw(adress.GetAdress)</label>
+                    </div>
+                    }
+                </div>
+            </div>
+            <div class="row mt-5">
+                <div class="col-md-3 offset-md-1">
+                        <a asp-controller="Account" asp-action="Adress" class="btn btn-primary"><i class="bi bi-caret-left-fill"></i>До профілю</a>
+                </div>
+                <div class="col-md-3">
+                    <button type="submit" asp-controller="Store" asp-action="ChooseAdress" class="btn btn-primary">Продовжити<i class="bi bi-caret-right-fill"></i></button>
+                </div>
+            </div>
+        </form>
+    }
+    else 
+    {
+        <div class="container-fluid">
+            <div class="row offset-md-1">
+                <div class="col ">
+                    У профілі відсутня адреса для доставки.
+                    <div class="col mt-3">
+                        <a asp-controller="Account" asp-action="Adress" class="btn btn-primary">Перейти до профілю</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+

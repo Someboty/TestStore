@@ -46,8 +46,8 @@ namespace Mag.Services
         public async Task<int> BasketItems()
         {
             var user = await CurrentUser();
-            var basket = await _dbContext.Baskets.Include(b => b.Products).ThenInclude(b => b.Products).FirstOrDefaultAsync(b => b.AspNetUserId == user.Id);
-            return basket?.Products.GroupBy(p => p.ProductsId).Count() ?? 0;
+            var basket = await _dbContext.Baskets.Include(b => b.BasketProducts).ThenInclude(b => b.Product).FirstOrDefaultAsync(b => b.AspNetUserId == user.Id);
+            return basket?.BasketProducts.GroupBy(p => p.ProductId).Count() ?? 0;
         }
     }
 }

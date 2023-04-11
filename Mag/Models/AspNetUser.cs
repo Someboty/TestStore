@@ -10,6 +10,7 @@ namespace Mag.Models
         public string? SecondName { get; set; }
         public DateTime? DOB { get; set; }
         public Genders? Gender { get; set; }
+        public List<Adress>? Adresses { get; set; }
     }
     public enum Genders
     {

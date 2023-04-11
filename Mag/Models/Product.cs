@@ -15,12 +15,29 @@ namespace Mag.Models
         public decimal Price { get; set; }
         public byte[]? Image { get; set; }
         public List<BasketProduct> Baskets { get; set; }
+        public bool IsDeleted { get; set; } = false;
+    }
+
+    [AttributeUsage(AttributeTargets.Field)]
+    public class CategoryAttribute: Attribute
+    {
+        public string Name { get; }
+        public string Description { get; }
+        public CategoryAttribute (string name, string description)
+        {
+            Name = name;
+            Description = description;
+        }
     }
     public enum Categories
     {
+        [Category("Смартфони", "Опис смартфонів")]
         Phones,
+        [Category("Комп'ютери", "Опис комп'ютерів")]
         Computers,
+        [Category("Ноутбуки", "Опис ноутбуків")]
         Notebooks,
+        [Category("Програмне забезпечення", "Опис програм")]
         Programs
     }
 }

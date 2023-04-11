@@ -1,0 +1,176 @@
+﻿@model List<Adress>
+@{
+    ViewData["Title"] = "Adress";
+}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-1 pt-5 ps-5">
+            <partial name="_NavProfilePartial" />
+        </div>
+        <div class="col-md-8 offset-md-1">
+            <h2>Адреса доставки</h2>
+            <hr />
+            <div class="accordion" id="addressAccordion">
+                <form asp-controller="Account" asp-action="AddAdress">
+                <div class="accordion-item">
+                    <div class="accordion-header" id="mainHeader">
+                        <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#mainAddress" aria-expanded="true" aria-controls="mainAddress">
+                            Головна адреса
+                        </button>
+                    </div>
+                    <div class="accordion-collapse collapse show" aria-labelledby="mainHeader" id="mainAddress" data-bs-parent="addressAccordion">
+                        <div class="accordion-body">
+                                <input type="hidden" asp-for="@Model[0].Id" />
+                                <div class="container-fluid">
+                                    <div class="row">
+                                        <div class="col-3 mt-3">
+                                            <div class="form-floating">
+                                                <input asp-for="@Model[0].State" class="form-control" placeholder="State" required />
+                                                <label asp-for="@Model[0].State">Область</label>
+                                            </div>
+                                        </div>
+                                        <div class="col-3 mt-3">
+                                            <div class="form-floating">
+                                                <input asp-for="@Model[0].City" class="form-control" placeholder="City" required />
+                                                <label asp-for="@Model[0].City">Місто</label>
+                                            </div>
+                                        </div>
+                                        <div class="col-3 mt-3">
+                                            <div class="form-floating">
+                                                <input asp-for="@Model[0].PostalCode" class="form-control" placeholder="PostalCode" required />
+                                                <label asp-for="@Model[0].PostalCode">Індекс</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row mb-3 mt-3">
+                                        <div class="col-3">
+                                            <div class="form-floating">
+                                                <input asp-for="@Model[0].Street" class="form-control" placeholder="Street" required />
+                                                <label asp-for="@Model[0].Street">Вулиця</label>
+                                            </div>
+                                        </div>
+                                        <div class="col-3">
+                                            <div class="form-floating">
+                                                <input asp-for="@Model[0].HouseNumber" class="form-control" placeholder="HouseNumber" required />
+                                                <label asp-for="@Model[0].HouseNumber">Номер дому</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col">
+                                            <div class="form-check">
+                                                <input type="checkbox" asp-for="@Model[0].IsPrimary" class="form-check-input" checked disabled/>
+                                                <label asp-for="@Model[0].IsPrimary" class="form-check-label">Основна адреса</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                        </div>
+                    </div>
+                </div>
+                    <div class="accordion-item">
+                        <div class="accordion-header" id="Header1">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#Address1" aria-expanded="true" aria-controls="Address1">
+                                Додаткова адреса 1
+                            </button>
+                        </div>
+                        <div class="accordion-collapse collapse" aria-labelledby="Header1" id="Address1" data-bs-parent="addressAccordion">
+                            <div class="accordion-body">
+                                <input type="hidden" asp-for="@Model[1].Id" />
+                                <div class="container-fluid">
+                                    <div class="row">
+                                        <div class="col-3 mt-3">
+                                            <div class="form-floating">
+                                                <input asp-for="@Model[1].State" class="form-control" placeholder="State" />
+                                                <label asp-for="@Model[1].State">Область</label>
+                                            </div>
+                                        </div>
+                                        <div class="col-3 mt-3">
+                                            <div class="form-floating">
+                                                <input asp-for="@Model[1].City" class="form-control" placeholder="City" />
+                                                <label asp-for="@Model[1].City">Місто</label>
+                                            </div>
+                                        </div>
+                                        <div class="col-3 mt-3">
+                                            <div class="form-floating">
+                                                <input asp-for="@Model[1].PostalCode" class="form-control" placeholder="PostalCode"/>
+                                                <label asp-for="@Model[1].PostalCode">Індекс</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row mb-3 mt-3">
+                                        <div class="col-3">
+                                            <div class="form-floating">
+                                                <input asp-for="@Model[1].Street" class="form-control" placeholder="Street" />
+                                                <label asp-for="@Model[1].Street">Вулиця</label>
+                                            </div>
+                                        </div>
+                                        <div class="col-3">
+                                            <div class="form-floating">
+                                                <input asp-for="@Model[1].HouseNumber" class="form-control" placeholder="HouseNumber" />
+                                                <label asp-for="@Model[1].HouseNumber">Номер дому</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="accordion-item">
+                        <div class="accordion-header" id="Header2">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#Address2" aria-expanded="true" aria-controls="Address2">
+                                Додаткова адреса 2
+                            </button>
+                        </div>
+                        <div class="accordion-collapse collapse" aria-labelledby="Header2" id="Address2" data-bs-parent="addressAccordion">
+                            <div class="accordion-body">
+                                <input type="hidden" asp-for="@Model[2].Id" />
+                                <div class="container-fluid">
+                                    <div class="row">
+                                        <div class="col-3 mt-3">
+                                            <div class="form-floating">
+                                                <input asp-for="@Model[2].State" class="form-control" placeholder="State" />
+                                                <label asp-for="@Model[2].State">Область</label>
+                                            </div>
+                                        </div>
+                                        <div class="col-3 mt-3">
+                                            <div class="form-floating">
+                                                <input asp-for="@Model[2].City" class="form-control" placeholder="City" />
+                                                <label asp-for="@Model[2].City">Місто</label>
+                                            </div>
+                                        </div>
+                                        <div class="col-3 mt-3">
+                                            <div class="form-floating">
+                                                <input asp-for="@Model[2].PostalCode" class="form-control" placeholder="PostalCode" />
+                                                <label asp-for="@Model[2].PostalCode">Індекс</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row mb-3 mt-3">
+                                        <div class="col-3">
+                                            <div class="form-floating">
+                                                <input asp-for="@Model[2].Street" class="form-control" placeholder="Street" />
+                                                <label asp-for="@Model[2].Street">Вулиця</label>
+                                            </div>
+                                        </div>
+                                        <div class="col-3">
+                                            <div class="form-floating">
+                                                <input asp-for="@Model[2].HouseNumber" class="form-control" placeholder="HouseNumber" />
+                                                <label asp-for="@Model[2].HouseNumber">Номер дому</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row text-end" >
+                        <div class="col-12 mt-5">
+                            <input type="submit" value="Оновити дані" class="btn btn-primary" />
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

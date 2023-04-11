@@ -1,0 +1,16 @@
+﻿@{
+    var active1 = ViewBag.NavBar == 1 ? "active" : "";
+    var active2 = ViewBag.NavBar == 2 ? "active" : "";
+    var active3 = ViewBag.NavBar == 3 ? "active" : "";
+}
+<ul class="nav nav-pills flex-sm-column">
+    <li class="nav-item" >
+        <a class="nav-link @active1" asp-controller="Account" asp-action="Profile">Profile</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link @active2" asp-controller="Account" asp-action="Adress">Adress</a>
+    </li>
+    <li class="nav-item" >
+        <a class="nav-link @active3" asp-controller="Account" asp-action="Orders">Orders</a>
+    </li>
+</ul>

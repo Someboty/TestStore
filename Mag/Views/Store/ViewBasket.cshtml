@@ -6,9 +6,9 @@
 <hr />
 <div class="container">
     <div class="row align-items-center">
-        @if (Model != null && Model.Products.Any())
+        @if (Model != null && Model.BasketProducts.Any())
         {
-            @foreach(var prod in Model.Products.GroupBy(b=>b.Products))
+            @foreach(var prod in Model.BasketProducts.GroupBy(b=>b.Product))
             {
                 <div class="col-md-1">
                     <a class="link-dark" style="text-decoration:none" asp-controller="Store" asp-action="Product" asp-route-id="@prod.Key.Id"><img src="data:image;base64,@System.Convert.ToBase64String(prod.Key.Image!)" class="img-thumbnail" /></a>                           
@@ -34,10 +34,14 @@
             }
             <div class="col-md-12 text-end">
                 @{
-                    var sum = Model.Products.Sum(p => p.Products.Price);
+                    var sum = Model.BasketProducts.Sum(p => p.Product.Price);
                 }
                 @sum$
             </div>
+            <div class="col-md-12 pt-5 text-end">
+                <a asp-controller="Store" asp-action="ChooseAdress" class="btn btn-primary">Перейти до доставки</a>
+            </div>
         }
     </div>
-</div> 
+</div>
+

@@ -8,7 +8,7 @@ namespace Mag.Models
         public int Id { get; set; }
         public string AspNetUserId { get; set; }
         public AspNetUser? User { get; set; }
-        public List<BasketProduct> Products { get; set; }
+        public List<BasketProduct> BasketProducts { get; set; }
 
     }
 }
