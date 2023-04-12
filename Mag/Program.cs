@@ -1,4 +1,3 @@
-using Mag.Auth;
 using Mag.Interfaces;
 using Mag.Models;
 using Mag.Services;

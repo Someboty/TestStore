@@ -24,11 +24,15 @@ namespace Mag.Controllers
         {
             return View();
         }
-        [HttpGet("error/")]
-        public IActionResult Error()
+        [HttpGet("error/{statusCode}")]
+        public IActionResult Error(int? statusCode)
         {
-            var resp = new Response { status = (int)TempData["status"], Message= TempData["Message"].ToString() };
-            return View(resp);
+            if(statusCode == null) 
+            { 
+                var resp = new Response { Status = (int)TempData["Status"], Message= TempData["Message"].ToString() };
+                return View(resp);
+            }
+            return View(new Response {Status = statusCode, Message = "Not found"});
         }
     }
 }

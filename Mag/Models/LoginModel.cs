@@ -1,7 +1,7 @@
 ﻿#nullable disable
 using System.ComponentModel.DataAnnotations;
 
-namespace Mag.Auth
+namespace Mag.Models
 {
     public record LoginModel
     {

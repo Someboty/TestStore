@@ -1,8 +1,7 @@
-﻿using Mag.Models;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
-namespace Mag.Auth
+namespace Mag.Models
 {
     public class ApplicationContext : IdentityDbContext<AspNetUser>
     {
@@ -15,6 +14,7 @@ namespace Mag.Auth
         public virtual DbSet<Adress> Adresses => Set<Adress>();
         public virtual DbSet<Order> Orders => Set<Order>();
         public virtual DbSet<OrderProduct> OrderProducts => Set<OrderProduct>();
+        public virtual DbSet<StatusHistory> StatusHistories => Set<StatusHistory>();
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);

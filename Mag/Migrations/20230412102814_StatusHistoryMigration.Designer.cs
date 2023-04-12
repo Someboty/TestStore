@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Mag.Migrations
 {
     [DbContext(typeof(ApplicationContext))]
-    [Migration("20230410120548_OrderTableAdded")]
-    partial class OrderTableAdded
+    [Migration("20230412102814_StatusHistoryMigration")]
+    partial class StatusHistoryMigration
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -168,17 +168,17 @@ namespace Mag.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("BasketsId")
+                    b.Property<int>("BasketId")
                         .HasColumnType("int");
 
-                    b.Property<int>("ProductsId")
+                    b.Property<int>("ProductId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("BasketsId");
+                    b.HasIndex("BasketId");
 
-                    b.HasIndex("ProductsId");
+                    b.HasIndex("ProductId");
 
                     b.ToTable("BasketProducts");
                 });
@@ -194,6 +194,9 @@ namespace Mag.Migrations
                     b.Property<string>("City")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("HouseNumber")
                         .IsRequired()
@@ -284,6 +287,30 @@ namespace Mag.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Products");
+                });
+
+            modelBuilder.Entity("Mag.Models.StatusHistory", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("OrderId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("StatusChanged")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("OrderId");
+
+                    b.ToTable("StatusHistories");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -441,21 +468,21 @@ namespace Mag.Migrations
 
             modelBuilder.Entity("Mag.Models.BasketProduct", b =>
                 {
-                    b.HasOne("Mag.Models.Basket", "Baskets")
-                        .WithMany("Products")
-                        .HasForeignKey("BasketsId")
+                    b.HasOne("Mag.Models.Basket", "Basket")
+                        .WithMany("BasketProducts")
+                        .HasForeignKey("BasketId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Mag.Models.Product", "Products")
+                    b.HasOne("Mag.Models.Product", "Product")
                         .WithMany("Baskets")
-                        .HasForeignKey("ProductsId")
+                        .HasForeignKey("ProductId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Baskets");
+                    b.Navigation("Basket");
 
-                    b.Navigation("Products");
+                    b.Navigation("Product");
                 });
 
             modelBuilder.Entity("Mag.Models.Order", b =>
@@ -486,6 +513,17 @@ namespace Mag.Migrations
                     b.Navigation("Order");
 
                     b.Navigation("Product");
+                });
+
+            modelBuilder.Entity("Mag.Models.StatusHistory", b =>
+                {
+                    b.HasOne("Mag.Models.Order", "Order")
+                        .WithMany("StatusHistories")
+                        .HasForeignKey("OrderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Order");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -546,12 +584,14 @@ namespace Mag.Migrations
 
             modelBuilder.Entity("Mag.Models.Basket", b =>
                 {
-                    b.Navigation("Products");
+                    b.Navigation("BasketProducts");
                 });
 
             modelBuilder.Entity("Mag.Models.Order", b =>
                 {
                     b.Navigation("Products");
+
+                    b.Navigation("StatusHistories");
                 });
 
             modelBuilder.Entity("Mag.Models.Product", b =>

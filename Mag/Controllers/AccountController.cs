@@ -1,5 +1,4 @@
-﻿using Mag.Auth;
-using Mag.Interfaces;
+﻿using Mag.Interfaces;
 using Mag.Models;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -37,20 +36,20 @@ namespace Mag.Controllers
         {
             if (!ModelState.IsValid)
             {
-                TempData["status"] = 400;
+                TempData["Status"] = 400;
                 TempData["Message"] = "Invalid requst";
                 return RedirectToAction("Error", "Home");
             }
             var user = await _userManager.FindByEmailAsync(model.Email);
             if (user == null)
             {
-                TempData["status"] = 401;
+                TempData["Status"] = 401;
                 TempData["Message"] = "Email or password is invalid";
                 return RedirectToAction("Error", "Home");
             }
             if (await _userManager.CheckPasswordAsync(user, model.Password) == false)
             {
-                TempData["status"] = 401;
+                TempData["Status"] = 401;
                 TempData["Message"] = "Email or password is invalid";
                 return RedirectToAction("Error", "Home");
             }
@@ -94,7 +93,7 @@ namespace Mag.Controllers
                 var userExists = await _userManager.FindByNameAsync(model.Email);
                 if (userExists != null)
                 {
-                    TempData["status"] = 400;
+                    TempData["Status"] = 400;
                     TempData["Message"] = "User already exists!";
                     return RedirectToAction("Error", "Home");
                 }
@@ -109,13 +108,13 @@ namespace Mag.Controllers
                 if (!result.Succeeded)
                 {
                     var errorMessage = string.Join(", ", result.Errors.Select(e => e.Description));
-                    TempData["status"] = 400;
+                    TempData["Status"] = 400;
                     TempData["Message"] = $"User creation failed! {errorMessage}";
                     return RedirectToAction("Error", "Home");
                 }
                 return RedirectToAction("Login");
             }
-            TempData["status"] = 400;
+            TempData["Status"] = 400;
             TempData["Message"] = "Invalid request";
             return RedirectToAction("Error", "Home");
         }
@@ -147,9 +146,23 @@ namespace Mag.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction("Profile");
             }
-            TempData["status"] = 400;
+            TempData["Status"] = 400;
             TempData["Message"] = "Invalid request";
             return RedirectToAction("Error", "Home");
+        }
+        [HttpGet]
+        public async Task<IActionResult> DeleteProfile()
+        {            
+            var user = await _userService.CurrentUser();
+            await _context.Adresses.Where(a => a.UserId == user.Id).ExecuteDeleteAsync();
+            await _context.BasketProducts.Where(p => p.Basket.AspNetUserId == user.Id).ExecuteDeleteAsync();
+            await _context.Baskets.Where(b => b.AspNetUserId == user.Id).ExecuteDeleteAsync();
+            await _context.OrderProducts.Where(o => o.Order.UserId == user.Id).ExecuteDeleteAsync();
+            await _context.StatusHistories.Where(s => s.Order.UserId == user.Id).ExecuteDeleteAsync();
+            await _context.Orders.Where(o => o.UserId == user.Id).ExecuteDeleteAsync();
+            await _context.Users.Where(u => u.Id == user.Id).ExecuteDeleteAsync();
+            await HttpContext.SignOutAsync();
+            return Redirect("/");
         }
         [HttpGet]
         public async Task<IActionResult> Adress()
@@ -187,7 +200,7 @@ namespace Mag.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction("Adress");
             }
-            TempData["status"] = 400;
+            TempData["Status"] = 400;
             TempData["Message"] = "Invalid request";
             return RedirectToAction("Error", "Home");
         }

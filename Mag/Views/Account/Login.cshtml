@@ -1,11 +1,11 @@
-﻿@model Mag.Auth.LoginModel
+﻿@model LoginModel
 @{
     ViewData["Title"] = "Login";
 }
 <div class="container-fluid">
     <div class="row">
         <div class="col-md-4 offset-md-1 pt-3">
-            <h2>Welcome back</h2>
+            <h2>Вхід</h2>
             <hr />
             <form asp-action="Login">
                 <div asp-validation-summary="All" class="text-danger pt-3"></div>
@@ -15,12 +15,12 @@
                     <span asp-validation-for="Email" class="text-danger"></span>
                 </div>
                 <div class="form-group pt-3">
-                    <label asp-for="Password" class="control-label"></label>
+                    <label asp-for="Password" class="control-label">Пароль</label>
                     <input asp-for="Password" class="form-control" />
                     <span asp-validation-for="Password" class="text-danger"></span>
                 </div>
-                <div class="form-group pt-3">
-                    <input type="submit" value="Login" class="btn btn-primary" />
+                <div class="form-group mt-5">
+                    <input type="submit" value="Увійти" class="btn btn-primary" />
                 </div>
             </form>
         </div>

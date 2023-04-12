@@ -23,21 +23,23 @@ namespace Mag.Models
     {
         public string Name { get; }
         public string Description { get; }
-        public CategoryAttribute (string name, string description)
+        public string Icon { get; }
+        public CategoryAttribute (string name, string description, string icon)
         {
             Name = name;
             Description = description;
+            Icon = icon;
         }
     }
     public enum Categories
     {
-        [Category("Смартфони", "Опис смартфонів")]
+        [Category("Смартфони", "Опис смартфонів", "bi bi-phone")]
         Phones,
-        [Category("Комп'ютери", "Опис комп'ютерів")]
+        [Category("Комп'ютери", "Опис комп'ютерів", "bi-pc-display")]
         Computers,
-        [Category("Ноутбуки", "Опис ноутбуків")]
+        [Category("Ноутбуки", "Опис ноутбуків", "bi bi-laptop")]
         Notebooks,
-        [Category("Програмне забезпечення", "Опис програм")]
+        [Category("Програмне забезпечення", "Опис програм", "bi bi-windows")]
         Programs
     }
 }

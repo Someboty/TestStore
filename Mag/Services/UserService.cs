@@ -1,5 +1,4 @@
-﻿using Mag.Auth;
-using Mag.Interfaces;
+﻿using Mag.Interfaces;
 using Mag.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;

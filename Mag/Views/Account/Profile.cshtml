@@ -2,13 +2,13 @@
 @{
     ViewData["Title"] = "Profile";
 }
-<div class="container-fluid">
+<div class="container-fluid position-relative">
     <div class="row">
         <div class="col-md-1 pt-5 ps-5">
             <partial name="_NavProfilePartial" />
         </div>
         <div class="col-md-8 offset-md-1">
-            <h2>Profile</h2>
+            <h2>Профіль</h2>
             <hr />
             <form asp-action="UpdateProfile">
                 <div class="container-fluid">
@@ -51,7 +51,12 @@
                     </div>
                     <div class="row">
                         <div class="col pt-4">
-                            <input type="submit" value="UpdateProfile" class="btn btn-primary" />
+                            <input type="submit" value="Оновити дані" class="btn btn-primary" />
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-3" style="padding-top:10%">
+                            <a asp-controller="Account" asp-action="DeleteProfile" class="btn btn-danger">Видалити профіль</a>
                         </div>
                     </div>
                 </div>
@@ -59,6 +64,7 @@
 
         </div>
     </div>
+    
 </div>
 @section Scripts {
     @{

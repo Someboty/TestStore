@@ -1,5 +1,4 @@
-﻿using Mag.Auth;
-using Mag.Interfaces;
+﻿using Mag.Interfaces;
 using Mag.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -127,7 +126,7 @@ namespace Mag.Controllers
             var adress = await _context.Adresses.Where(a => a.UserId == user.Id && a.Id == (int)adressId).FirstOrDefaultAsync();
             if (basket == null || adress == null)
             {
-                TempData["status"] = 400;
+                TempData["Status"] = 400;
                 TempData["Message"] = "Invalid request";
                 return RedirectToAction("Error", "Home");
             }
