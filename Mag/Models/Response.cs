@@ -1,4 +1,4 @@
-﻿namespace Mag.Auth
+﻿namespace Mag.Models
 {
     public class Response
     {
